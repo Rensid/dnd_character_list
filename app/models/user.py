@@ -1,37 +1,15 @@
-from pydantic import BaseModel
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy.orm import relationship
+
+from app.db.base import Base
 
 
-class User(BaseModel):
-    id: int
-    username: str
-    first_name: str
-    last_name: str
-    email: str | None = None
-    password: str
+class User(Base):
+    __tablename__ = 'users'
 
-
-data = [
-    {
-        "id": 1,
-        'username': 'user1',
-        'first_name': 'user1',
-        'last_name': 'user1',
-        'password': 'password'
-    },
-    {
-        "id": 2,
-        'username': 'user2',
-        'first_name': 'user2',
-        'last_name': 'user2',
-        'password': 'password'
-    },
-    {
-        'id': 3,
-        'username': 'user3',
-        'first_name': 'user3',
-        'last_name': 'user3',
-        'password': 'password'
-    }
-]
-
-user_list = [User(**user) for user in data]
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True)
+    hashed_password = Column(String)
+    list_of_characters = relationship(
+        "Character", backref="owner", cascade="all, delete"
+    )
