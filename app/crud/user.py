@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-
+from sqlalchemy import or_
 from app.models.user_model import User
 from app.schemas.user_schema import UserSchema, UserPasswordSchema
 
@@ -14,19 +14,14 @@ def get_user(db: Session, user_id: int):
     return db.query(User).filter(User.id == user_id).first()
 
 
-def check_user_by_email_or_username(db: Session, username: str, email: str):
-    user = db.query(User).filter(User.email == email,
-                                 User.username == username).first()
-    if user:
-        return user
-    else:
-        return None
+def check_user_by_email_or_username(user: UserPasswordSchema, db: Session):
+    return db.query(User).filter(or_(User.email == user.email,
+                                 User.username == user.username)).first()
 
 
 def create_new_user(db: Session, user: UserPasswordSchema):
-    fake_hashed_password = user.password + 'notreallyhashed'
     db_user = User(
-        email=user.email, hashed_password=fake_hashed_password)
+        email=user.email, username=user.username, hashed_password=user.password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

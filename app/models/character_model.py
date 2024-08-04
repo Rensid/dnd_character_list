@@ -1,7 +1,6 @@
 from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from app.db.base import Base
-from app.models.user_model import User
 from app.models.associations import characters_items
 
 
