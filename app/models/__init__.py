@@ -1,6 +1,6 @@
-from app.models.character import Character
-from app.models.item import Item
-from app.models.user import User
+from app.models.character_model import Character
+from app.models.item_model import Item
+from app.models.user_model import User
 
 
 __all__ = ['Character', 'Item', 'User']
