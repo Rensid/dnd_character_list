@@ -1,8 +1,7 @@
 from pydantic import BaseModel
 
 
-class Item(BaseModel):
-    id: int
+class ItemBase(BaseModel):
     description: str
     bonus_strength: int | None = None
     bonus_constitution: int | None = None
@@ -11,3 +10,7 @@ class Item(BaseModel):
     bonus_charisma: int | None = None
     bonus_dexterity: int | None = None
     is_equipped: bool
+
+
+class ItemSchema(ItemBase):
+    id: int

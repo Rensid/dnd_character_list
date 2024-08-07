@@ -10,13 +10,21 @@ from app.schemas.user_schema import UserSchema, UserPasswordSchema
 '''
 
 
-def get_user(db: Session, user_id: int):
-    return db.query(User).filter(User.id == user_id).first()
-
-
 def check_user_by_email_or_username(user: UserPasswordSchema, db: Session):
     return db.query(User).filter(or_(User.email == user.email,
                                  User.username == user.username)).first()
+
+
+def check_user_by_email(user_email: str, db: Session):
+    return db.query(User).filter(User.email == user_email).first()
+
+
+def check_user_by_username(user_username: str, db: Session):
+    return db.query(User).filter(User.username == user_username).first()
+
+
+def get_user_by_id(db: Session, user_id: int):
+    return db.query(User).filter(User.id == user_id).first()
 
 
 def create_new_user(db: Session, user: UserPasswordSchema):
@@ -37,14 +45,20 @@ def update_user(db: Session, user_id, updated_user: UserSchema):
     db_user = db.query(User).filter(User.id == user_id).first()
     if db_user:
         db_user.username = updated_user.username
-        db_user.list_of_characters = updated_user.list_of_characters
+        db_user.list_of_characters = updated_user.characters
         db_user.email = updated_user.email
         db.commit()
         db.refresh(db_user)
     return db_user
 
 
-# def update_user_password(db: Session, user_id, updated_user: UserPasswordSchema):
+def update_user_password(db: Session, user_id, updated_user: UserPasswordSchema):
+    db_user = get_user_by_id(db, user_id)
+    if db_user:
+        db_user.hashed_password = updated_user.password
+        db.commit()
+        db.refresh(db_user)
+    return db_user
 
 
 def delete_user(db: Session, user_id):

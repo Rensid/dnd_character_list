@@ -1,8 +1,7 @@
 from pydantic import BaseModel
 
 
-class Character(BaseModel):
-    id: int
+class CharacterBase(BaseModel):
     name: str
     lvl: int
     race: str
@@ -14,3 +13,8 @@ class Character(BaseModel):
     wisdom: int
     charisma: int
     dexterity: int
+
+
+class CharacterSchema(BaseModel):
+    id: int
+    user_id: int
