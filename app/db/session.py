@@ -1,8 +1,9 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
+from config import DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT
 
-DATABASE_URL = "postgresql://postgres:Lihobor0754133@localhost:5432/postgres"
 
+DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

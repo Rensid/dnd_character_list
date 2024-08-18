@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.crud.user_crud import get_user_by_id, check_user_by_email_or_username, create_new_user, update_user, delete_user, update_user_password
+from app.crud.user_crud import clear_username, get_user_by_id, check_user_by_email_or_username, create_new_user, update_user, delete_user, update_user_password
 from app.schemas.user_schema import UserSchema, UserPasswordSchema, UserBase
 from app.db.session import get_db
 
@@ -37,3 +37,15 @@ def user_update(user_id: int, user: UserSchema, db: Session = Depends(get_db)):
 def reset_password(user_id: int, user: UserSchema, db: Session = Depends(get_db)):
     db_user = update_user_password(db, user_id, user)
     return db_user
+
+
+@users_router.delete("/users/{user_id}")
+def delete_user_by_id(user_id: int, db: Session = Depends(get_db)):
+    user = delete_user(db, user_id)
+    return user
+
+
+@users_router.delete("/users/{username}/")
+def delete_user_by_username(username: str, db: Session = Depends(get_db)):
+    user = clear_username(db, username)
+    return user

@@ -1,20 +1,30 @@
 from pydantic import BaseModel, Field, EmailStr
-from app.schemas.character_schema import Character
+from app.schemas.character_schema import CharacterSchema
 from typing import Annotated
 
 
 class UserBase(BaseModel):
-    email: Annotated[EmailStr, Field(max_length=50)]
+    email: EmailStr
     username: Annotated[str, Field(max_length=50)]
 
 
 class UserPasswordSchema(UserBase):
-    password: str
+    hashed_password: str
 
 
 class UserSchema(UserBase):
     id: Annotated[int, Field(gt=0)]
-    characters: list[Character] = []
+    characters: list[CharacterSchema] = []
 
     class Config:
         orm_mode = True
+
+
+class TokenData(BaseModel):
+    id: int | None = None
+    username: str | None = None
+
+
+class Token(BaseModel):
+    access: str
+    refresh: str
