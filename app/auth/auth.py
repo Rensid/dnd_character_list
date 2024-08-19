@@ -1,6 +1,6 @@
 from typing import Annotated
 from fastapi import Depends, HTTPException, status
-from app.auth.jwt import verify_password
+from app.auth.jwt import get_new_tokens, verify_password
 from app.crud.user_crud import check_user_by_username, get_user_by_id
 from app.db.session import get_db
 from app.models.user_model import User
@@ -31,11 +31,9 @@ def get_current_user(db: Annotated[Session, Depends(get_db)],
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-        type: str = payload.get('type')
-        if type == 'refresh':
-            
         user_id: str = payload.get("sub")
-        if user_id is None:
+        type: str = payload.get('type')
+        if user_id is None or type is None:
             raise credentials_exception
         token_data = TokenData(id=user_id)
     except InvalidTokenError:
@@ -43,7 +41,11 @@ def get_current_user(db: Annotated[Session, Depends(get_db)],
     user = get_user_by_id(db=db, user_id=token_data.id)
     if user is None:
         raise credentials_exception
-    return user
+    if type == "refresh":
+        tokens = get_new_tokens(user)
+        return {"user": user, "token": tokens}
+    elif type == "access":
+        return user
 
 # def get_current_user(db: Annotated[Session, Depends(get_db)],
 #                      token: Annotated[str, Depends(oauth2_scheme)]) -> UserSchema:

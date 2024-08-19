@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from uuid import uuid4
 
 from app.models.user_model import User
-from app.schemas.user_schema import UserSchema
+from app.schemas.user_schema import Token, UserSchema
 from config import SECRET_KEY, ALGORITHM
 from settings import pwd_context, redis_client
 
@@ -55,7 +55,7 @@ def verify_refresh_token(user_id: int, refresh_token):
     return True
 
 
-def get_new_tokens(user: User):
+def get_new_tokens(user: User, tokens: Token | None = None):
     '''
     создает одну функцию для получения обоих токенов
 

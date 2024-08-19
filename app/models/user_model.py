@@ -14,3 +14,5 @@ class User(Base):
     list_of_characters = relationship(
         "Character", backref="owner", cascade="all, delete"
     )
+    is_active = Column(Boolean, default=False)
+    is_premium = Column(Boolean, default=False)
