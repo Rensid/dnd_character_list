@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field, EmailStr
+from datetime import datetime
+from pydantic import BaseModel, Field, EmailStr, UUID4
 from app.schemas.character_schema import CharacterSchema
 from typing import Annotated
 
@@ -18,6 +19,7 @@ class UserSchema(UserBase):
 
     class Config:
         orm_mode = True
+        from_attributes = True
 
 
 class TokenData(BaseModel):
@@ -28,3 +30,10 @@ class TokenData(BaseModel):
 class Token(BaseModel):
     access: str
     refresh: str
+
+
+class EmailVerification(BaseModel):
+    uuid: UUID4
+    user_id: int
+    created: datetime
+    expiretional: datetime

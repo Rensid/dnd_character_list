@@ -43,3 +43,7 @@ def read_users_me(
     current_user: Annotated[User, Depends(get_current_user)]
 ):
     return current_user
+
+@auth_router.get("/users/verify_email/")
+def verify_user_email(entered_code: int, ):
+    
