@@ -1,0 +1,10 @@
+
+
+services:
+  app:
+    container_name: dnd_app
+    build: ./
+    depends_on:
+      - db
+  db:
+    container_name: dnd_db

@@ -10,6 +10,7 @@ from app.db.session import get_db
 from app.crud.user_crud import create_new_user
 from app.models.user_model import User
 from app.schemas.user_schema import Token, UserPasswordSchema, UserSchema
+from settings import redis_verify_client
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -44,6 +45,15 @@ def read_users_me(
 ):
     return current_user
 
+
 @auth_router.get("/users/verify_email/")
-def verify_user_email(entered_code: int, ):
-    
+def verify_user_email(entered_code: int, user: Annotated[User, Depends(get_current_user)], db: Annotated[Session, Depends(get_db)]):
+    user_code = redis_verify_client.get(user.username)
+    if int(user_code) == entered_code:
+        user.is_active = True
+        db.commit()
+        db.refresh(user)
+        return user
+    else:
+        raise ValueError("Invalid code")
+

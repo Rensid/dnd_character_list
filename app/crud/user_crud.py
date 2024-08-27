@@ -4,7 +4,7 @@ from sqlalchemy import or_
 from app.auth.jwt import get_password_hash
 from app.models.user_model import User
 from app.schemas.user_schema import UserSchema, UserPasswordSchema
-from app.auth.verify import verify_email, send_code_to_email, generate_secret_code
+from app.auth.verify import send_code_to_email, generate_secret_code
 from settings import redis_verify_client
 
 
@@ -37,15 +37,12 @@ def create_new_user(db: Session, user: UserPasswordSchema) -> User:
             hashed_password=get_password_hash(user.hashed_password)
         )
     code = generate_secret_code()
-    if send_code_to_email(user.email, code):
-        redis_verify_client.setex(user.username, 300, code)
-        db.add(db_user)
-        db.commit()
-        db.refresh(db_user)
-        return db_user
-    else:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST,
-                            detail='invalid email address')
+    send_code_to_email.delay(user.email, code)
+    redis_verify_client.setex(user.username, 300, code)
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
 
 
 def update_user(db: Session, user_id, updated_user: UserSchema):
