@@ -2,6 +2,7 @@ from datetime import datetime
 from pydantic import BaseModel, Field, EmailStr, UUID4
 from app.schemas.character_schema import CharacterSchema
 from typing import Annotated
+from typing import Union
 
 
 class UserBase(BaseModel):
@@ -23,8 +24,8 @@ class UserSchema(UserBase):
 
 
 class TokenData(BaseModel):
-    id: int | None = None
-    username: str | None = None
+    id: Union[int, None] = None
+    username: Union[str, None] = None
 
 
 class Token(BaseModel):

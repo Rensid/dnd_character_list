@@ -1,14 +1,13 @@
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11
+FROM python:3.10
 
-WORKDIR /src
+WORKDIR /code
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-
-COPY requirements.txt requirements.txt
-
+ADD requirements.txt /code/
 RUN pip install -r requirements.txt
 
-COPY . .
+ADD . /code/
+ADD .env.docker /code/.env
 
-CMD python main.py
+CMD bash -c 'while !</dev/tcp/dnd_db/5432; do sleep 5; done; alembic upgrade head; python main.py'

@@ -1,6 +1,7 @@
 import jwt
 from datetime import datetime, timedelta, timezone
 from uuid import uuid4
+from typing import Union
 
 from app.models.user_model import User
 from app.schemas.user_schema import Token, UserSchema
@@ -18,7 +19,7 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
+def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
@@ -55,7 +56,7 @@ def verify_refresh_token(user_id: int, refresh_token):
     return True
 
 
-def get_new_tokens(user: User, tokens: Token | None = None):
+def get_new_tokens(user: User, tokens: Union[Token, None] = None):
     '''
     создает одну функцию для получения обоих токенов
 

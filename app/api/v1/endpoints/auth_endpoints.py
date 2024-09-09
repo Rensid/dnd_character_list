@@ -56,4 +56,3 @@ def verify_user_email(entered_code: int, user: Annotated[User, Depends(get_curre
         return user
     else:
         raise ValueError("Invalid code")
-

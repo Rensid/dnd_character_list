@@ -1,3 +1,6 @@
 .env
+.env.docker
 tz.txt
-venv
+.venv
+.vscode
+.idea

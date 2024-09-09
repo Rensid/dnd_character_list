@@ -3,7 +3,6 @@ from fastapi import Depends, HTTPException, status
 from app.auth.jwt import get_new_tokens, verify_password
 from app.crud.user_crud import check_user_by_username, get_user_by_id
 from app.db.session import get_db
-from app.models.user_model import User
 from app.schemas.user_schema import TokenData
 from settings import oauth2_scheme
 from config import SECRET_KEY
@@ -13,7 +12,7 @@ from jwt.exceptions import InvalidTokenError
 from sqlalchemy.orm import Session
 
 
-def authenticate_user(db: Session, username: str, password: str) -> User:
+def authenticate_user(db: Session, username: str, password: str):
     user = check_user_by_username(username, db)
     if not user:
         return False

@@ -4,7 +4,7 @@ from sqlalchemy import or_
 from app.auth.jwt import get_password_hash
 from app.models.user_model import User
 from app.schemas.user_schema import UserSchema, UserPasswordSchema
-from app.auth.verify import send_code_to_email, generate_secret_code
+from app.auth.verify import generate_secret_code, send_code_to_email
 from settings import redis_verify_client
 
 

@@ -1,10 +1,37 @@
-
+version: '3.8'  
 
 services:
-  app:
-    container_name: dnd_app
-    build: ./
-    depends_on:
-      - db
   db:
     container_name: dnd_db
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Lihobor
+      POSTGRES_DB: dnd_db
+    ports:
+      - "5432:5432"
+  app:
+    container_name: dnd_app
+    # command: bash -c 'while !</dev/tcp/dnd_db/5432; do sleep 5; done; alembic upgrade head; python main.py'
+    build: ./
+    ports:
+      - 8000:8000
+    environment:
+      DATABASE_URL: postgresql://postgres:Lihobor0754133@dnd_db:5432/dnd_db
+    depends_on:
+      - db
+  celery:
+    build: ./
+    command: celery -A settings.celery_app worker --uid=nobody --gid=nogroup --loglevel=info
+    volumes:
+      - .:/code/ 
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+      - app
+      - redis
+
+  redis:
+    container_name: redis
+    image: redis:7
